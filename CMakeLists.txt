@@ -92,6 +92,15 @@ set(EXTENSION_SOURCES
     src/nanodbc_extension.cpp
     src/odbc_parameters.cpp
     src/odbc_encoding.cpp
+	src/nanodbc_storage.cpp
+	src/storage/nanodbc_catalog_set.cpp
+	src/storage/nanodbc_catalog.cpp
+	src/storage/nanodbc_schema_entry.cpp
+	src/storage/nanodbc_schema_set.cpp
+	src/storage/nanodbc_table_entry.cpp
+	src/storage/nanodbc_table_set.cpp
+	src/storage/nanodbc_transaction.cpp
+	src/storage/nanodbc_transaction_manager.cpp
 )
 
 # Combined sources

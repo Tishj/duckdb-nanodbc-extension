@@ -103,9 +103,13 @@ echo "Setting ODBC environment variables"
 export ODBCSYSINI=$HOMEBREW_ETC
 export ODBCINI=$HOMEBREW_ETC/odbc.ini
 
-# Export for subsequent steps in the workflow
-echo "ODBCSYSINI=$HOMEBREW_ETC" >> $GITHUB_ENV
-echo "ODBCINI=$HOMEBREW_ETC/odbc.ini" >> $GITHUB_ENV
+# Export for subsequent steps in GitHub Actions, if applicable
+if [ -n "$GITHUB_ENV" ]; then
+  echo "ODBCSYSINI=$HOMEBREW_ETC" >> "$GITHUB_ENV"
+  echo "ODBCINI=$HOMEBREW_ETC/odbc.ini" >> "$GITHUB_ENV"
+else
+  echo "GITHUB_ENV not set; skipping export to GitHub Actions environment."
+fi
 
 # Test the installation
 echo "===== Testing DuckDB ODBC Driver ====="
