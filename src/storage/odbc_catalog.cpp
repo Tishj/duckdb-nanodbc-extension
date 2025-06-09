@@ -19,28 +19,26 @@ void OdbcCatalog::Initialize(bool load_builtin) {
 void OdbcCatalog::ScanSchemas(ClientContext &context, std::function<void(SchemaCatalogEntry &)> callback) {
 	auto &transaction = OdbcTransaction::Get(context, *this);
 
-	throw NotImplementedException("Nanodbc ScanSchemas");
-	//auto &schemas = transaction.GetSchemas();
-	//schemas.Scan(context, [&](CatalogEntry &schema) {
-	//	callback(schema.Cast<OdbcSchemaEntry>());
-	//});
+	auto &schemas = transaction.GetSchemas();
+	schemas.Scan(context, [&](CatalogEntry &schema) {
+		throw NotImplementedException("Nanodbc ScanSchemas");
+		//callback(schema.Cast<OdbcSchemaEntry>());
+	});
 }
 
 optional_ptr<SchemaCatalogEntry> OdbcCatalog::LookupSchema(CatalogTransaction transaction,
                                                          const EntryLookupInfo &schema_lookup,
                                                          OnEntryNotFound if_not_found) {
 	auto &odbc_transaction = OdbcTransaction::Get(transaction.GetContext(), *this);
+	auto &schemas = odbc_transaction.GetSchemas();
 
-	throw NotImplementedException("Nanodbc LookupSchema");
-	//auto &schemas = odbc_transaction.GetSchemas();
+	auto &schema_name = schema_lookup.GetEntryName();
+	auto entry = schemas.GetEntry(transaction.GetContext(), schema_name);
+	if (!entry && if_not_found != OnEntryNotFound::RETURN_NULL) {
+		throw CatalogException(schema_lookup.GetErrorContext(), "Schema with name \"%s\" not found", schema_name);
+	}
 
-	//auto &schema_name = schema_lookup.GetEntryName();
-	//auto entry = schemas.GetEntry(transaction.GetContext(), schema_name);
-	//if (!entry && if_not_found != OnEntryNotFound::RETURN_NULL) {
-	//	throw CatalogException(schema_lookup.GetErrorContext(), "Schema with name \"%s\" not found", schema_name);
-	//}
-
-	//return reinterpret_cast<SchemaCatalogEntry *>(entry.get());
+	return reinterpret_cast<SchemaCatalogEntry *>(entry.get());
 }
 
 optional_ptr<CatalogEntry> OdbcCatalog::CreateSchema(CatalogTransaction transaction, CreateSchemaInfo &info) {

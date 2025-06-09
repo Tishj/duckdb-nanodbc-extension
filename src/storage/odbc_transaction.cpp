@@ -4,7 +4,7 @@
 namespace duckdb {
 
 OdbcTransaction::OdbcTransaction(OdbcCatalog &catalog, TransactionManager &manager, ClientContext &context)
-    : Transaction(manager, context), access_mode(catalog.access_mode) {
+    : Transaction(manager, context), schemas(catalog), access_mode(catalog.access_mode) {
 	//	connection = ICConnection::Open(catalog.path);
 }
 

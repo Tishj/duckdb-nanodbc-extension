@@ -2,6 +2,7 @@
 #pragma once
 
 #include "duckdb/transaction/transaction.hpp"
+#include "storage/odbc_schema_set.hpp"
 
 namespace duckdb {
 class OdbcCatalog;
@@ -21,6 +22,11 @@ public:
 	AccessMode GetAccessMode() const {
 		return access_mode;
 	}
+	OdbcSchemaSet &GetSchemas() {
+		return schemas;
+	}
+public:
+	OdbcSchemaSet schemas;
 private:
 	OdbcTransactionState transaction_state;
 	AccessMode access_mode;
