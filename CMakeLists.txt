@@ -96,6 +96,8 @@ set(EXTENSION_SOURCES
     src/storage/odbc_transaction.cpp
     src/storage/odbc_transaction_manager.cpp
     src/storage/odbc_schema_set.cpp
+    src/storage/odbc_schema_entry.cpp
+    src/storage/odbc_table_set.cpp
 )
 
 # Combined sources
