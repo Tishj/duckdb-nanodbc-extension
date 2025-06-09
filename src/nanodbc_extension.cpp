@@ -3,12 +3,27 @@
 #include "nanodbc_extension.hpp"
 #include "duckdb.hpp"
 #include "odbc_scanner.hpp"
+#include "storage/odbc_catalog.hpp"
 
 #include "duckdb/catalog/catalog.hpp"
 #include "duckdb/main/extension_util.hpp"
 #include "duckdb/parser/parsed_data/create_table_function_info.hpp"
+#include "storage/odbc_transaction_manager.hpp"
 
 namespace duckdb {
+
+static unique_ptr<TransactionManager> CreateTransactionManager(StorageExtensionInfo *storage_info, AttachedDatabase &db, Catalog &catalog) {
+	auto &odbc_catalog = catalog.Cast<OdbcCatalog>();
+	return make_uniq<OdbcTransactionManager>(db, odbc_catalog);
+}
+
+class OdbcStorageExtension : public StorageExtension {
+public:
+	OdbcStorageExtension() {
+		attach = OdbcCatalog::Attach;
+		create_transaction_manager = CreateTransactionManager;
+	}
+};
 
 static void RegisterOdbcFunctions(DatabaseInstance &instance) {
     // Register each function separately to avoid copy issues
@@ -22,6 +37,8 @@ static void LoadInternal(DatabaseInstance &instance) {
     // Register the ODBC functions
     RegisterOdbcFunctions(instance);
 
+	auto &config = DBConfig::GetConfig(instance);
+	config.storage_extensions["odbc"] = make_uniq<OdbcStorageExtension>();
 }
 
 void NanodbcExtension::Load(DuckDB &db) {
